@@ -168,6 +168,8 @@ func handler(w dns.ResponseWriter, req *dns.Msg) {
 }
 
 func main() {
+	flag.Parse()
+
 	// Syncthing uses self-signed certificates for its infrastructure as every host
 	// has its own identity key. Turn off validation entirely for now.
 	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
