@@ -138,6 +138,7 @@ func handler(w dns.ResponseWriter, req *dns.Msg) {
 
 	addresses, seen, err := lookup(name)
 	if _, ok := err.(errNotFound); ok {
+		m.Rcode = dns.RcodeNameError
 		w.WriteMsg(m)
 		queriesNotFound.Inc()
 		return
