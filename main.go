@@ -47,6 +47,11 @@ var (
 		Help: "Total number of not found responses returned",
 	})
 
+	queriesInvalid = promauto.NewCounter(prometheus.CounterOpts{
+		Name: "syncthing_dns_queries_invalid_total",
+		Help: "Total number of invalid queries received",
+	})
+
 	queriesFailed = promauto.NewCounter(prometheus.CounterOpts{
 		Name: "syncthing_dns_queries_failed_total",
 		Help: "Total number of server failure responses returned",
@@ -129,10 +134,9 @@ func handler(w dns.ResponseWriter, req *dns.Msg) {
 	parts := strings.Split(m.Question[0].Name, ".")
 	name := strings.ToUpper(parts[0])
 	if !idRegexp.MatchString(name) {
-		log.Printf("Invalid name: %q", name)
 		m.Rcode = dns.RcodeServerFailure
 		w.WriteMsg(m)
-		queriesFailed.Inc()
+		queriesInvalid.Inc()
 		return
 	}
 
